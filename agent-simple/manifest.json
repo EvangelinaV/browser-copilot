@@ -1,10 +1,24 @@
 {
-    "id": "simple",
-    "name": "Simple",
-    "welcomeMessage": "Hi, I am an assistant based on GPT!\n\nYou have a case from contact #{contact_name} with the following subject: #{subject}",
+    "id": "gpt",
+    "name": "GPT",
+    "welcomeMessage": "Security Notification: A recent security breach has exposed David Green's credentials on a public repository. This makes the information easily accessible to anyone, which could lead to identity theft or unauthorized account access. The client should update the password immediately, enable two-factor authentication, and review all accounts for suspicious activity.",
     "prompts": [
         { "name" : "clock", "text" : "what is the current time?" }
     ],
-    "contactEmail": "support@simpleagent.example"
+    "contactEmail": "{{ contact_email }}", 
+    "onHttpRequest": [
+      {
+        "condition": {
+          "urlRegex": "https://collaborixai-dev-ed.develop.lightning.force.com/lightning/r/Case/500ak00000KqmhnAAB/view"
+        },
+        "actions": [
+        {
+            "activate": {
+              
+            }
+        }
+        ]
+      }
+    ]
   }
   

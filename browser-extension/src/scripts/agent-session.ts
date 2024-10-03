@@ -11,7 +11,7 @@ export class AgentSession {
   url: string
   id?: string
   authService?: AuthService
-  pollId?: number
+  pollId?: any
 
   constructor(tabId: number, agent: Agent, url: string, id?: string, pollId?: number) {
     this.id = id

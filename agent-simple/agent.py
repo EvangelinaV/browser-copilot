@@ -59,10 +59,28 @@ def clock():
 llm = AzureChatOpenAI(deployment_name=os.getenv("AZURE_DEPLOYMENT_NAME"), temperature=0.7, verbose=True, streaming=True)
 agent = create_conversational_retrieval_agent(llm, [clock], max_iterations=3)
 
+SYSTEM_PROMPT = ("You are an agent who provide information about security policis from our clients information.\n" 
+"A recent security breach has exposed the client's credentials on a public repository. This makes the information easily accessible to anyone, which could lead to identity theft or unauthorized account access. "
+"The client should update the password immediately, enable two-factor authentication, and review all accounts for suspicious activity.\n"
+"If he ask for more information about his situation, answer with the following text between cuotes: \"A recent security breach has resulted in your credentials being exposed on a public repository. \n This makes your information easily accessible to anyone and increases the risk of identity theft or unauthorized account access.\n\n"
+"**Compromised Information:**\n"
+"- Email address: [Client's Email Address]\n"
+"- Username: [Username]\n"
+"- Password: [Password]\n\n"
+"**Severity and Potential Risks:**\n"
+"This breach is considered highly severe as your credentials are now publicly available. \n It is crucial to update your password immediately, enable two-factor authentication (2FA), and review all accounts for suspicious activity.\n\n"
+"**Actions Taken:**\n"
+"- We have restricted access to your account and initiated password reset procedures.\n"
+"- We have enabled alerts for any unauthorized login attempts.\n\n"
+"**Step-by-Step Guide:**  \n"
+" -Please follow the steps in this guide to update your passwords and enable additional security measures: [Link to Guide].\n\n"
+"Please answer the following user question: ")
 
 @app.post('/sessions/{session_id}/questions', status_code=status.HTTP_200_OK)
 async def answer_question(session_id: str, req: QuestionRequest) -> QuestionResponse:
-    resp = agent.invoke(req.question)
+    # Include the system prompt in every question
+    question_with_context = f"{SYSTEM_PROMPT}\n\n{req.question}"
+    resp = agent.invoke(question_with_context)
     return QuestionResponse(answer=resp['output'])
 
 
